@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Entornos virtuales
+env/
+venv/
+.venv/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Dependencias instaladas para Lambda (se crean en CloudShell)
+lambda_scraper/*.so
+lambda_scraper/*.dist-info/
+lambda_scraper/*.egg-info/
+lambda_scraper/psycopg2/
+lambda_scraper/selectolax/
+lambda_scraper/requests/
+
+# Archivos ZIP generados
+*.zip
