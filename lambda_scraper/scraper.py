@@ -1,43 +1,42 @@
 import requests
 from selectolax.parser import HTMLParser
-from datetime import datetime
 
-def scrape_indeed(keyword="python developer", location=""):
+BASE_URL = "https://pe.indeed.com/jobs"
 
-    query = keyword.replace(" ", "+")
-    url = f"https://www.indeed.com/jobs?q={query}&l={location}"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+              "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "es-US,es;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Referer": "https://pe.indeed.com/",
+}
 
-    headers = {"User-Agent": "Mozilla/5.0"}
+def scrape_indeed(query: str, location: str = ""):
+    print("Scraping Indeed…")
 
-    response = requests.get(url, headers=headers)
+    params = {
+        "q": query,
+        "l": location,
+    }
+
+    response = requests.get(BASE_URL, headers=HEADERS, params=params)
     response.raise_for_status()
 
     html = HTMLParser(response.text)
+
     jobs = []
 
-    for div in html.css("div.cardOutline"):
-        try:
-            job_id = div.attributes.get("data-jk")
-            if not job_id:
-                continue
+    for card in html.css("div.job_seen_beacon"):
+        title = card.css_first("h2 span")
+        company = card.css_first(".companyName")
+        location = card.css_first(".companyLocation")
 
-            title = div.css_first("h2.jobTitle span").text()
-            company = div.css_first("span.companyName").text() if div.css_first("span.companyName") else None
-            location = div.css_first("div.companyLocation").text() if div.css_first("div.companyLocation") else None
-            summary = div.css_first("div.job-snippet").text(separator=" ").strip() if div.css_first("div.job-snippet") else None
-            
-            job_url = f"https://www.indeed.com/viewjob?jk={job_id}"
-
-            jobs.append({
-                "job_id": job_id,
-                "title": title,
-                "company": company,
-                "location": location,
-                "summary": summary,
-                "url": job_url,
-                "scraped_at": datetime.utcnow()
-            })
-        except Exception:
-            pass
+        jobs.append({
+            "title": title.text(strip=True) if title else None,
+            "company": company.text(strip=True) if company else None,
+            "location": location.text(strip=True) if location else None,
+        })
 
     return jobs

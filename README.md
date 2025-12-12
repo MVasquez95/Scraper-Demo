@@ -8,26 +8,26 @@ El objetivo es tener un scraper profesional, modular, fácil de desplegar y list
 
 ## Arquitectura del Proyecto
 
-EventBridge (cron)
-↓
-Lambda Scraper (Python)
-↓
-PostgreSQL (Amazon RDS)
-↓
-API Gateway
-↓
-Lambda API Handler
-↓
+EventBridge (cron)  
+↓  
+Lambda Scraper (Python)  
+↓  
+PostgreSQL (Amazon RDS)  
+↓  
+API Gateway  
+↓  
+Lambda API Handler  
+↓  
 Frontend Dashboard (React)
 
 ## Estructura del Proyecto
-- `scraper_project/`
+- `Scraper_Demo/`
     - `lambda_scraper/`
         - `handler.py` → Entry point de AWS Lambda
         - `scraper.py` → Scraping logic (Indeed)
         - `db.py` → Conexión e inserción en PostgreSQL
         - `utils.py` → Utilidades futuras
-        - `requirements.txt` → Dependencias para instalar en CloudShell
+    - `requirements.txt` → Dependencias para instalar en CloudShell
 
 No incluye credenciales ni variables de entorno.
 
