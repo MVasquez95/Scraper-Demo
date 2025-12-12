@@ -1,5 +1,6 @@
 import os
 import psycopg2
+from datetime import datetime
 
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
@@ -21,16 +22,16 @@ def insert_jobs(jobs):
     cur = conn.cursor()
 
     sql = """
-    INSERT INTO jobs (job_id, title, company, location, summary, url, scraped_at)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    ON CONFLICT (job_id) DO NOTHING;
+    INSERT INTO jobs (title, company, location, salary, url, source, description, posted_at)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT (url) DO NOTHING;
     """
 
     for job in jobs:
         cur.execute(sql, (
-            job["job_id"], job["title"], job["company"],
-            job["location"], job["summary"], job["url"],
-            job["scraped_at"]
+            job["title"], job["company"], job["location"],
+            job["salary"], job["url"], job["source"],
+            job["description"], job["posted_at"]
         ))
 
     conn.commit()
